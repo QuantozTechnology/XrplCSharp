@@ -3,6 +3,8 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
+using Xrpl.Models.Enums;
+
 namespace Xrpl.Models.Methods
 {
     /// <summary>
@@ -27,7 +29,8 @@ namespace Xrpl.Models.Methods
         /// one of these accounts.
         /// </summary>
         [JsonProperty("streams")]
-        public List<string>? Streams { get; set; }
+        [JsonConverter(typeof(StreamTypeListConverter))]
+        public List<StreamType>? Streams { get; set; }
         /// <summary>
         /// (Optional) Array with the unique addresses of accounts to monitor for validated transactions.
         /// The addresses must be in the XRP Ledger's base58 format.
