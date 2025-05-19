@@ -24,7 +24,7 @@ namespace Xrpl.BinaryCodec.Types
         {
             if (string.IsNullOrEmpty(hex) || hex.Length != Width * 2)
                 throw new ArgumentException($"Hex string must be {Width * 2} characters.");
-            var bytes = Convert.FromHexString(hex);
+            var bytes = hex.FromHex();
             return new Hash192(bytes);
         }
 

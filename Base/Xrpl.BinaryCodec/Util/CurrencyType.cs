@@ -18,7 +18,7 @@ namespace Xrpl.BinaryCodec.Util
             }
             if (currency.Length != 40)
                 throw new ArgumentException("IOU currency code must be 40 hex characters.");
-            return Convert.FromHexString(currency);
+            return currency.FromHex();
         }
     }
 }
