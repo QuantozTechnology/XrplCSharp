@@ -17,12 +17,12 @@ namespace Xrpl.Utils.Hashes
         const int HEX = 16;
         const int BYTE_LENGTH = 4;
         const byte MASK = 0xff;
-        public static string AddressToHex(string address)
+        public static string AddressToHex(this string address)
         {
             return XrplCodec.DecodeAccountID(address).ToHex();
         }
 
-        public static string LedgerSpaceHex(LedgerSpace name)
+        public static string LedgerSpaceHex(this LedgerSpace name)
         {
             return ((int)name).ToString("X4");
         }
@@ -44,7 +44,13 @@ namespace Xrpl.Utils.Hashes
         /// <returns></returns>
         public static bool IsHexCurrencyCode(this string code) => Regex.IsMatch(code, @"[0-9a-fA-F]{40}", RegexOptions.IgnoreCase);
 
-        public static string CurrencyToHex(string currency)
+        /// <summary>
+        /// checks and generates a token code for transmission to the network
+        /// </summary>
+        /// <param name="currency">Currency code</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">If Currency code length more than 40 characters</exception>
+        public static string CurrencyToHex(this string currency)
         {
             var cur_code = currency.Trim();
             if (cur_code.Length <= 3)
@@ -69,7 +75,7 @@ namespace Xrpl.Utils.Hashes
         /// </summary>
         /// <param name="txBlobHex">The binary transaction blob as a hexadecimal string.</param>
         /// <returns>The hash to sign.</returns>
-        public static string HashTx(string txBlobHex)
+        public static string HashTx(this string txBlobHex)
         {
 
             var prefix = HashPrefix.TRANSACTION_SIGN.ToString("X").ToUpper();
@@ -85,18 +91,18 @@ namespace Xrpl.Utils.Hashes
                     sequence.ToString("X").PadLeft(BYTE_LENGTH * 2, '0')).Sha512Half();
         }
 
-        public static string HashTX(string txBlobHex)
+        public static string HashTX(this string txBlobHex)
         {
             string prefix = ((int)HashPrefix.TRANSACTION_SIGN).ToString("X").ToUpper();
             return (prefix + txBlobHex).Sha512Half();
         }
 
-        public static string HashAccountRoot(string address)
+        public static string HashAccountRoot(this string address)
         {
             return (LedgerSpaceHex(LedgerSpace.Account) + AddressToHex(address)).Sha512Half();
         }
 
-        public static string HashSignerListId(string address)
+        public static string HashSignerListId(this string address)
         {
             return (LedgerSpaceHex(LedgerSpace.SignerList) + AddressToHex(address) + "00000000").Sha512Half();
         }

@@ -4,6 +4,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 
 using Xrpl.Client.Extensions;
+using Xrpl.Models.Common;
 
 // https://github.com/XRPLF/xrpl.js/blob/main/packages/xrpl/src/models/methods/accountLines.ts
 
@@ -101,9 +102,7 @@ public class TrustLine
     /// Readable currency name 
     /// </summary>
     [JsonIgnore]
-    public string CurrencyValidName => Currency is { Length: > 0, } row
-        ? row.Length > 3 ? row.StartsWith(value: "03") ? $"LP {row[2..6]}.." : row.FromHexString().Trim(trimChar: '\0') : row
-        : string.Empty;
+    public string CurrencyValidName => Currency?.CurrencyReadableName();
 
     /// <summary>
     /// The maximum amount of currency that the issuer account is willing to owe the perspective account. 
