@@ -44,16 +44,14 @@ namespace Xrpl.Models.Methods
         /// <summary>
         /// Array of transactions matching the request's criteria, as explained  below.
         /// </summary>
-        [JsonProperty("offset")]
-        public int Offset { get; set; }
+        [JsonProperty("transactions")]
+        public List<TransactionSummary> Transactions { get; set; }
         /// <summary>
         /// If included and set to true, the information in this response comes from  a validated ledger version.<br/>
         /// Otherwise, the information is subject to  change.
         /// </summary>
-        [JsonProperty("transactions")]
-        public List<TransactionSummary> Transactions { get; set; }
-
-     
+        [JsonProperty("validated")]
+        public bool Validated { get; set; }
     }
 
     public interface IAccountTransaction
@@ -82,7 +80,9 @@ namespace Xrpl.Models.Methods
         /// (Validated transactions only) The transaction metadata, which shows the exact outcome of the transaction in detail.
         /// </summary>
         public Meta Meta { get; set; }
-
+        /// <summary>
+        /// (JSON mode) JSON object defining the transaction.
+        /// </summary>
         public TransactionResponseCommon Transaction { get; }
 
         /// <summary>
