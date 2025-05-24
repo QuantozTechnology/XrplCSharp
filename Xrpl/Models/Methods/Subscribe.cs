@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 
+using System;
 using System.Collections.Generic;
 
 using Xrpl.Models.Enums;
@@ -12,7 +13,7 @@ namespace Xrpl.Models.Methods
     /// <summary>
     /// Order book currency
     /// </summary>
-    public class BookCurrency
+    public class BookCurrency : IEquatable<BookCurrency>
     {
         /// <summary>
         /// Currency code
@@ -24,12 +25,33 @@ namespace Xrpl.Models.Methods
         /// </summary>
         [JsonProperty("issuer")]
         public string Issuer { get; set; }
+
+        public bool Equals(BookCurrency other)
+        {
+            if (other == null) return false;
+
+            return string.Equals(Currency, other.Currency, StringComparison.Ordinal)
+                   && string.Equals(Issuer, other.Issuer, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object obj) => Equals(obj as BookCurrency);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + (Currency?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Issuer?.GetHashCode() ?? 0);
+                return hash;
+            }
+        }
     }
 
     /// <summary>
     /// Defines the order book for monitoring updates
     /// </summary>
-    public class Book
+    public class Book : IEquatable<Book>
     {
         /// <summary>
         /// Specification of which currency the account taking the Offer would receive, as a currency object with no amount.
@@ -58,6 +80,29 @@ namespace Xrpl.Models.Methods
         /// </summary>
         [JsonProperty("both")]
         public bool? Both { get; set; }
+
+        public bool Equals(Book other)
+        {
+            if (other == null) return false;
+
+            return TakerGets.Equals(other.TakerGets)
+                   && TakerPays.Equals(other.TakerPays)
+                   && string.Equals(Taker, other.Taker, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object obj) => Equals(obj as Book);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + (TakerGets?.GetHashCode() ?? 0);
+                hash = hash * 23 + (TakerPays?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Taker?.GetHashCode() ?? 0);
+                return hash;
+            }
+        }
     }
 
     /// <summary>
