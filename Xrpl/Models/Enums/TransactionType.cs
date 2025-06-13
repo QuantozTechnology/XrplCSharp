@@ -98,6 +98,12 @@
         /// The Clawback transaction is used by the token issuer to claw back issued tokens from a holder.
         /// </summary>
         Clawback,
+
+        /// <summary>
+        /// The NFTokenModify transaction modifies an NFToken's URI if its tfMutable is set to true.
+        /// </summary>
+        NFTokenModify,
+
         /// <summary>
         /// Unknown tx Type.
         /// </summary>

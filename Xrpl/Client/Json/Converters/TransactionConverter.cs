@@ -45,6 +45,7 @@ namespace Xrpl.Client.Json.Converters
                 "NFTokenAcceptOffer" => new NFTokenAcceptOfferResponse(),
                 "NFTokenCancelOffer" => new NFTokenCancelOfferResponse(),
                 "NFTokenBurn" => new NFTokenBurnResponse(),
+                "NFTokenModify" => new NFTokenModifyResponse(),
                 "NFTokenCreateOffer" => new NFTokenCreateOfferResponse(),
                 "NFTokenMint" => new NFTokenMintResponse(),
                 "OfferCancel" => new OfferCancelResponse(),

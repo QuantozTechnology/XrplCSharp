@@ -32,7 +32,11 @@ namespace Xrpl.Models.Transactions
         /// If set, indicates that this NFT can be transferred.<br/>
         /// This flag has no effect if the token is being transferred from the issuer or to the issuer.
         /// </summary>
-        tfTransferable = 8
+        tfTransferable = 8,
+
+        /// <summary>
+        /// If set, indicates that this NFT's URI can be modified.
+        tfMutable = 16,
     }
     /// <inheritdoc cref="INFTokenMint" />
     public class NFTokenMint : TransactionCommon, INFTokenMint

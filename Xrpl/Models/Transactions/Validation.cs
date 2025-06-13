@@ -84,6 +84,9 @@ namespace Xrpl.Models.Transactions
                 case "NFTokenMint":
                     await ValidateNFTokenMint(tx);
                     break;
+                case "NFTokenModify":
+                    await ValidateNFTokenMint(tx);
+                    break;
 
                 case "OfferCancel":
                     await ValidateOfferCancel(tx);
