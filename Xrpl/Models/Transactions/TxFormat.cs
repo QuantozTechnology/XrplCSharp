@@ -247,6 +247,12 @@ namespace Xrpl.Models.Transaction
                     [Field.TransferFee] = Requirement.Optional,
                     [Field.URI] = Requirement.Optional
                 },
+                [BinaryCodec.Types.TransactionType.NFTokenModify] = new TxFormat
+                {
+                    [Field.NFTokenID] = Requirement.Required,
+                    [Field.Owner] = Requirement.Optional,
+                    [Field.URI] = Requirement.Optional
+                },
                 [BinaryCodec.Types.TransactionType.NFTokenBurn] = new TxFormat
                 {
                     [Field.NFTokenID] = Requirement.Required,
