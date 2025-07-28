@@ -1,7 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using NBitcoin;
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 using Xrpl.AddressCodec;
 using Xrpl.BinaryCodec;
@@ -9,7 +15,6 @@ using Xrpl.Client.Exceptions;
 using Xrpl.Keypairs;
 using Xrpl.Models.Transactions;
 using Xrpl.Utils.Hashes;
-using NBitcoin;
 
 // https://github.com/XRPLF/xrpl.js/blob/main/packages/xrpl/src/Wallet/index.ts
 
@@ -232,5 +237,42 @@ namespace Xrpl.Wallet
             byte[] entropy = XummExtension.EntropyFromXummNumbers(numbers);
             return FromEntropy(entropy,null, algorithm);
         }
+
+        /// <summary>
+        /// Creates a Wallet from any text.
+        /// </summary>
+        /// <param name="text">any text to generate wallet</param>
+        /// <param name="algorithm">The digital signature algorithm to generate an address for.</param>
+        /// <param name="salt">user salt as a password</param>
+        /// <returns>generated wallet</returns>
+        public static XrplWallet FromNormalizedText(string text, string algorithm = null,  string ? salt = null)
+        {
+            var normalized = NormalizeText(text);
+
+            if (!string.IsNullOrWhiteSpace(salt))
+                normalized += "::" + salt.Trim();
+
+            var entropy = SHA256.HashData(Encoding.UTF8.GetBytes(normalized));
+            var seedBytes = entropy.Take(16).ToArray();
+
+            return XrplWallet.FromEntropy(seedBytes, algorithm ?? XrplWallet.DEFAULT_ALGORITHM);
+        }
+
+        private static string NormalizeText(string input)
+        {
+            // Убираем лишние пробелы, переводим в нижний регистр, нормализуем символы
+            var normalized = input
+                .Trim()
+                .Replace("\r\n", "\n")  // Windows → Unix
+                .Replace("\r", "\n")    // Mac → Unix
+                .ToLowerInvariant();     // если важно быть case-insensitive
+
+            // Сжимаем множественные пробелы и переводы строк в один пробел
+            normalized = string.Join(" ", normalized
+                .Split([' ', '\n', '\t',], StringSplitOptions.RemoveEmptyEntries));
+
+            return normalized;
+        }
+
     }
 }
