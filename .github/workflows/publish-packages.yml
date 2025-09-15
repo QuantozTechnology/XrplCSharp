@@ -82,14 +82,3 @@ jobs:
             --api-key ${{ secrets.GITHUB_TOKEN }} \
             --skip-duplicate
         done
-
-    - name: Publish to NuGet.org (if token is available)
-      if: ${{ vars.NUGET_API_KEY != '' || secrets.NUGET_API_KEY != '' }}
-      run: |
-        for package in ./packages/*.nupkg; do
-          echo "Publishing $package to NuGet.org"
-          dotnet nuget push "$package" \
-            --source https://api.nuget.org/v3/index.json \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --skip-duplicate
-        done
