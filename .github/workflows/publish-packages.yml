@@ -84,7 +84,7 @@ jobs:
         done
 
     - name: Publish to NuGet.org (if token is available)
-      if: ${{ secrets.NUGET_API_KEY != '' }}
+      if: ${{ vars.NUGET_API_KEY != '' || secrets.NUGET_API_KEY != '' }}
       run: |
         for package in ./packages/*.nupkg; do
           echo "Publishing $package to NuGet.org"
