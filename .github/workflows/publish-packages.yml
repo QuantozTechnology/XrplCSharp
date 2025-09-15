@@ -1,0 +1,85 @@
+name: Publish NuGet Packages
+
+on:
+  release:
+    types: [created]
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          8.0.x
+          9.0.x
+
+    - name: Extract version from tag
+      id: extract_version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        # Remove 'v' prefix if present
+        VERSION=${VERSION#v}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Extracted version: $VERSION"
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build solution
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run tests
+      continue-on-error: true
+      run: |
+        echo "Running tests - failures will not block the release"
+        dotnet test --configuration Release --no-build --verbosity normal || echo "Some tests failed, but continuing with release..."
+
+    - name: Update package versions
+      run: |
+        VERSION=${{ steps.extract_version.outputs.version }}
+        echo "Updating package versions to $VERSION"
+        
+        # Update all project files with the new version
+        sed -i "s/<PackageVersion>.*<\/PackageVersion>/<PackageVersion>$VERSION<\/PackageVersion>/g" Base/Xrpl.AddressCodec/Xrpl.AddressCodec.csproj
+        sed -i "s/<PackageVersion>.*<\/PackageVersion>/<PackageVersion>$VERSION<\/PackageVersion>/g" Base/Xrpl.BinaryCodec/Xrpl.BinaryCodec.csproj
+        sed -i "s/<PackageVersion>.*<\/PackageVersion>/<PackageVersion>$VERSION<\/PackageVersion>/g" Base/Xrpl.Keypairs/Xrpl.Keypairs.csproj
+        sed -i "s/<PackageVersion>.*<\/PackageVersion>/<PackageVersion>$VERSION<\/PackageVersion>/g" Xrpl/Xrpl.csproj
+
+    - name: Pack Xrpl.AddressCodec
+      run: dotnet pack Base/Xrpl.AddressCodec/Xrpl.AddressCodec.csproj --configuration Release --no-build --output ./packages
+
+    - name: Pack Xrpl.BinaryCodec
+      run: dotnet pack Base/Xrpl.BinaryCodec/Xrpl.BinaryCodec.csproj --configuration Release --no-build --output ./packages
+
+    - name: Pack Xrpl.Keypairs
+      run: dotnet pack Base/Xrpl.Keypairs/Xrpl.Keypairs.csproj --configuration Release --no-build --output ./packages
+
+    - name: Pack Xrpl
+      run: dotnet pack Xrpl/Xrpl.csproj --configuration Release --no-build --output ./packages
+
+    - name: List packages
+      run: ls -la ./packages/
+
+    - name: Publish to GitHub Packages
+      run: |
+        for package in ./packages/*.nupkg; do
+          echo "Publishing $package"
+          dotnet nuget push "$package" \
+            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --skip-duplicate
+        done

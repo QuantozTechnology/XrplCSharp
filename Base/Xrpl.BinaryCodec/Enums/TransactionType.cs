@@ -80,6 +80,12 @@ namespace Xrpl.BinaryCodec.Types
         public static readonly TransactionType NFTokenCancelOffer = Add(nameof(NFTokenCancelOffer), 28);
         /// <summary> This transaction accepts an existing offer to buy or sell an existing  NFT. </summary>
         public static readonly TransactionType NFTokenAcceptOffer = Add(nameof(NFTokenAcceptOffer), 29);
+        
+        /// <summary>
+        /// This transaction allows an issuer to reclaim funds from an account.
+        /// </summary>
+        public static readonly TransactionType Clawback = Add(nameof(Clawback), 30);
+        
         public static readonly TransactionType NFTokenModify = Add(nameof(NFTokenModify), 61);
 
         public static readonly TransactionType AMMCreate = Add(nameof(AMMCreate), 35);
@@ -88,6 +94,7 @@ namespace Xrpl.BinaryCodec.Types
         public static readonly TransactionType AMMVote = Add(nameof(AMMVote), 38);
         public static readonly TransactionType AMMBid = Add(nameof(AMMBid), 39);
         public static readonly TransactionType AMMDelete = Add(nameof(AMMDelete), 40);
+
 
         // ...
         /// <summary>
